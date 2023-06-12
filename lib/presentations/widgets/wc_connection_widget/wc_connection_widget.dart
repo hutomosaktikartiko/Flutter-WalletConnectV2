@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
+import '../../../utils/constants.dart';
 import 'wc_connection_model.dart';
 import 'wc_connection_widget_info.dart';
 

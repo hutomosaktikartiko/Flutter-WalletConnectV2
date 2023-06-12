@@ -4,7 +4,7 @@ import 'wc_auth_request_model.dart';
 import 'wc_session_request_model.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
-import '../../../constants.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/string_constants.dart';
 import '../wc_connection_widget/wc_connection_model.dart';
 import '../wc_connection_widget/wc_connection_widget.dart';

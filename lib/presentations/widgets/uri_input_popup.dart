@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../utils/constants.dart';
 import '../../utils/string_constants.dart';
 import 'custom_button.dart';
 
@@ -22,7 +22,6 @@ class UriInputPopup extends StatelessWidget {
       ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width - StyleConstants.linear8,
-        // height: 400.0,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

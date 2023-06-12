@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../constants.dart';
+import '../../utils/constants.dart';
 
 class QRScanSheet extends StatelessWidget {
   QRScanSheet({
