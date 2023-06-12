@@ -1,5 +1,5 @@
 
-import '../utils/dart_defines.dart';
+import '../../utils/dart_defines.dart';
 import 'chain_key.dart';
 import 'i_key_service.dart';
 

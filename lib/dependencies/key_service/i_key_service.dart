@@ -1,4 +1,4 @@
-import 'package:test_wallet_connect_v2/key_service/chain_key.dart';
+import 'package:test_wallet_connect_v2/dependencies/key_service/chain_key.dart';
 
 abstract class IKeyService {
   /// Returns a list of all the keys.
