@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../utils/namespace_model_builder.dart';
-import 'wc_auth_request_model.dart';
-import 'wc_session_request_model.dart';
+import '../../utils/namespace_model_builder.dart';
+import '../../models/auth_request_model.dart';
+import '../../models/session_request_model.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
-import '../../../utils/constants.dart';
-import '../../../utils/string_constants.dart';
-import '../wc_connection_widget/wc_connection_model.dart';
-import '../wc_connection_widget/wc_connection_widget.dart';
+import '../../utils/constants.dart';
+import '../../utils/string_constants.dart';
+import '../../models/connection_model.dart';
+import 'connection_widget.dart';
 
-class WCConnectionRequestWidget extends StatelessWidget {
-  const WCConnectionRequestWidget({
+class ConnectionRequestWidget extends StatelessWidget {
+  const ConnectionRequestWidget({
     Key? key,
     required this.wallet,
     this.authRequest,
@@ -18,8 +18,8 @@ class WCConnectionRequestWidget extends StatelessWidget {
   }) : super(key: key);
 
   final Web3Wallet wallet;
-  final WCAuthRequestModel? authRequest;
-  final WCSessionRequestModel? sessionProposal;
+  final AuthRequestModel? authRequest;
+  final SessionRequestModel? sessionProposal;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class WCConnectionRequestWidget extends StatelessWidget {
   }
 
   Widget _buildAuthRequest() {
-    final model = WCConnectionModel(
+    final model = ConnectionModel(
       text: wallet.formatAuthMessage(
         iss: 'did:pkh:eip155:1:${authRequest!.iss}',
         cacaoPayload: CacaoRequestPayload.fromPayloadParams(
@@ -81,7 +81,7 @@ class WCConnectionRequestWidget extends StatelessWidget {
       ),
     );
 
-    return WCConnectionWidget(
+    return ConnectionWidget(
       title: StringConstants.message,
       info: [model],
     );
@@ -90,7 +90,7 @@ class WCConnectionRequestWidget extends StatelessWidget {
   Widget _buildSessionProposal(BuildContext context) {
     // Create the connection models using the required and optional namespaces provided by the proposal data
     // The key is the title and the list of values is the data
-    final List<WCConnectionWidget> views =
+    final List<ConnectionWidget> views =
         ConnectionWidgetBuilder.buildFromRequiredNamespaces(
       sessionProposal!.request.requiredNamespaces,
     );
@@ -98,14 +98,5 @@ class WCConnectionRequestWidget extends StatelessWidget {
     return Column(
       children: views,
     );
-    // return Expanded(
-    //   child: ListView.separated(
-    //     itemBuilder: (context, index) => views[index],
-    //     separatorBuilder: (context, index) => const SizedBox(
-    //       height: StyleConstants.linear8,
-    //     ),
-    //     itemCount: views.length,
-    //   ),
-    // );
   }
 }

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/constants.dart';
-import 'wc_connection_model.dart';
-import 'wc_connection_widget_info.dart';
+import '../../utils/constants.dart';
+import '../../models/connection_model.dart';
+import 'connection_item_widget.dart';
 
-class WCConnectionWidget extends StatelessWidget {
-  const WCConnectionWidget({
+class ConnectionWidget extends StatelessWidget {
+  const ConnectionWidget({
     super.key,
     required this.title,
     required this.info,
   });
 
   final String title;
-  final List<WCConnectionModel> info;
+  final List<ConnectionModel> info;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class WCConnectionWidget extends StatelessWidget {
           _buildTitle(title),
           const SizedBox(height: StyleConstants.linear8),
           ...info.map(
-            (e) => WCConnectionWidgetInfo(
+            (e) => ConnectionItemWidget(
               model: e,
             ),
           ),

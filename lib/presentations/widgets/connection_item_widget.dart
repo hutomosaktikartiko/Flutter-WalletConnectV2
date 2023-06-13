@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/constants.dart';
-import 'wc_connection_model.dart';
+import '../../utils/constants.dart';
+import '../../models/connection_model.dart';
 
-class WCConnectionWidgetInfo extends StatelessWidget {
-  const WCConnectionWidgetInfo({
+class ConnectionItemWidget extends StatelessWidget {
+  const ConnectionItemWidget({
     Key? key,
     required this.model,
   }) : super(key: key);
 
-  final WCConnectionModel model;
+  final ConnectionModel model;
 
   @override
   Widget build(BuildContext context) {

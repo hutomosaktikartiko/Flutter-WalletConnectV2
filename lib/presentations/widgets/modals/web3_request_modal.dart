@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
 import '../../../utils/string_constants.dart';
-import '../custom_button.dart';
+import '../buttons/custom_button.dart';
 
-class WCRequestWidget extends StatelessWidget {
+class Web3RequestModal extends StatelessWidget {
   final Widget child;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
-  const WCRequestWidget({
+  const Web3RequestModal({
     super.key,
     required this.child,
     this.onAccept,
@@ -52,7 +52,6 @@ class WCRequestWidget extends StatelessWidget {
               ),
             ],
           ),
-          // ),
         ],
       ),
     );

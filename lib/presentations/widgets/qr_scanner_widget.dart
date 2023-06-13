@@ -5,8 +5,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../utils/constants.dart';
 
-class QRScanSheet extends StatelessWidget {
-  QRScanSheet({
+class QrScannerWidget extends StatelessWidget {
+  QrScannerWidget({
     required this.title,
     Key? key,
   }) : super(key: key);

@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'package:test_wallet_connect_v2/services/chain_service.dart';
 
-import 'presentations/pages/apps_page.dart';
+import 'presentations/pages/home_page.dart';
 import 'presentations/widgets/modals/bottom_sheet_listener.dart';
 import 'services/bottom_sheet_service.dart';
 import 'services/evm_chain_service.dart';
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> with GetItStateMixin {
         title: const Text(StringConstants.connectPageTitle),
       ),
       body: BottomSheetListener(
-        child: AppsPage(),
+        child: HomePage(),
       ),
     );
   }

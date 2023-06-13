@@ -10,20 +10,20 @@ import '../../services/web3wallet_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/string_constants.dart';
 import '../widgets/modals/uri_input_popup.dart';
-import '../widgets/pairing_item.dart';
-import '../widgets/qr_scan_sheet.dart';
-import 'app_detail_page.dart';
+import '../widgets/pairing_item_widget.dart';
+import '../widgets/qr_scanner_widget.dart';
+import 'pairing_detail_page.dart';
 
-class AppsPage extends StatefulWidget with GetItStatefulWidgetMixin {
-  AppsPage({
+class HomePage extends StatefulWidget with GetItStatefulWidgetMixin {
+  HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  AppsPageState createState() => AppsPageState();
+  HomePageState createState() => HomePageState();
 }
 
-class AppsPageState extends State<AppsPage> with GetItStateMixin {
+class HomePageState extends State<HomePage> with GetItStateMixin {
   List<PairingInfo> _pairings = [];
 
   final Web3Wallet web3Wallet = GetIt.I<Web3WalletService>().getWeb3Wallet();
@@ -102,9 +102,9 @@ class AppsPageState extends State<AppsPage> with GetItStateMixin {
   }
 
   Widget _buildPairingList() {
-    final List<PairingItem> pairingItems = _pairings
+    final List<PairingItemWidget> pairingItems = _pairings
         .map(
-          (PairingInfo pairing) => PairingItem(
+          (PairingInfo pairing) => PairingItemWidget(
             key: ValueKey(pairing.topic),
             pairing: pairing,
             onTap: () => _onListItemTap(pairing),
@@ -166,7 +166,7 @@ class AppsPageState extends State<AppsPage> with GetItStateMixin {
     final String? s = await showModalBottomSheet<String>(
       context: context,
       builder: (BuildContext modalContext) {
-        return QRScanSheet(
+        return QrScannerWidget(
           title: StringConstants.scanPairing,
         );
       },
@@ -223,7 +223,7 @@ class AppsPageState extends State<AppsPage> with GetItStateMixin {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AppDetailPage(
+        builder: (context) => PairingDetailPage(
           pairing: pairing,
         ),
       ),

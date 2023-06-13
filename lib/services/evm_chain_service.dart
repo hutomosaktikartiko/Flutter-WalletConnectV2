@@ -11,9 +11,9 @@ import 'package:web3dart/web3dart.dart';
 
 import '../models/chain_key_model.dart';
 import '../models/ethereum_transaction_model.dart';
-import '../presentations/widgets/wc_connection_widget/wc_connection_model.dart';
-import '../presentations/widgets/wc_connection_widget/wc_connection_widget.dart';
-import '../presentations/widgets/wc_request_widget/wc_request_widget.dart';
+import '../models/connection_model.dart';
+import '../presentations/widgets/connection_widget.dart';
+import '../presentations/widgets/modals/web3_request_modal.dart';
 import '../utils/string_parsing.dart';
 import 'bottom_sheet_service.dart';
 import 'chain_service.dart';
@@ -120,12 +120,13 @@ class EvmChainServiceImpl implements ChainService {
   }
 
   Future<String?> requestAuthorization(String text) async {
-    final bool? approved = await _bottomSheetService.queueBottomSheet(
-      widget: WCRequestWidget(
-        child: WCConnectionWidget(
+    // Show the bottom sheet
+    final bool? isApproved = await _bottomSheetService.queueBottomSheet(
+      widget: Web3RequestModal(
+        child: ConnectionWidget(
           title: 'Sign Transaction',
           info: [
-            WCConnectionModel(
+            ConnectionModel(
               text: text,
             ),
           ],
@@ -133,7 +134,7 @@ class EvmChainServiceImpl implements ChainService {
       ),
     );
 
-    if (approved != null && approved == false) {
+    if (isApproved != null && isApproved == false) {
       return 'User rejected signature';
     }
 
@@ -191,15 +192,6 @@ class EvmChainServiceImpl implements ChainService {
       final List<ChainKeyModel> keys = GetIt.I<KeyService>().getKeysForChain(
         getChainId(),
       );
-      // log('private key');
-      // log(keys[0].privateKey);
-
-      // final String signature = EthSigUtil.signMessage(
-      //   message: Uint8List.fromList(
-      //     utf8.encode(message),
-      //   ),
-      //   privateKey: keys[0].privateKey,
-      // );
       final EthPrivateKey credentials = EthPrivateKey.fromHex(
         keys[0].privateKey,
       );

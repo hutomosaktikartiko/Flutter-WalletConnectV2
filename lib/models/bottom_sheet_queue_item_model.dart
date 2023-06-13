@@ -11,4 +11,9 @@ class BottomSheetQueueItemModel {
     required this.widget,
     required this.completer,
   });
+
+  @override
+  String toString() {
+    return 'BottomSheetQueueItemModel(widget: $widget, completer: $completer)';
+  }
 }

@@ -1,10 +1,10 @@
-class WCConnectionModel {
+class ConnectionModel {
   final String? title;
   final String? text;
   final List<String>? elements;
   final Map<String, void Function()>? elementActions;
 
-  WCConnectionModel({
+  ConnectionModel({
     this.title,
     this.text,
     this.elements,

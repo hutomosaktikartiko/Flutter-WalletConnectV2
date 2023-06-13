@@ -8,10 +8,10 @@ import 'package:get_it/get_it.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 import '../models/chain_key_model.dart';
-import '../presentations/widgets/wc_connection_request/wc_auth_request_model.dart';
-import '../presentations/widgets/wc_connection_request/wc_connection_request_widget.dart';
-import '../presentations/widgets/wc_connection_request/wc_session_request_model.dart';
-import '../presentations/widgets/wc_request_widget/wc_request_widget.dart';
+import '../models/auth_request_model.dart';
+import '../presentations/widgets/modals/web3_request_modal.dart';
+import '../presentations/widgets/connection_request_widget.dart';
+import '../models/session_request_model.dart';
 import '../utils/dart_defines.dart';
 import 'bottom_sheet_service.dart';
 import 'key_service.dart';
@@ -27,8 +27,7 @@ abstract class Web3WalletService implements Disposable {
 }
 
 class Web3WalletServiceImpl implements Web3WalletService {
-  final BottomSheetService _bottomSheetHandler =
-      GetIt.I<BottomSheetService>();
+  final BottomSheetService _bottomSheetHandler = GetIt.I<BottomSheetService>();
 
   Web3Wallet? _web3Wallet;
 
@@ -46,7 +45,7 @@ class Web3WalletServiceImpl implements Web3WalletService {
 
   @override
   void create() {
-    // Create the web3wallet
+    // Create the web3wallet client
     _web3Wallet = Web3Wallet(
       core: Core(
         projectId: DartDefines.projectId,
@@ -63,19 +62,10 @@ class Web3WalletServiceImpl implements Web3WalletService {
     List<ChainKeyModel> chainKeys = GetIt.I<KeyService>().getKeys();
     for (final chainKey in chainKeys) {
       for (final chainId in chainKey.chains) {
-        if (chainId.startsWith('kadena')) {
-          // log('registering kadena $chainId:${chainKey.publicKey}');
-          _web3Wallet!.registerAccount(
-            chainId: chainId,
-            accountAddress: 'k**${chainKey.publicKey}',
-          );
-        } else {
-          // log('registering other $chainId:${chainKey.publicKey}');
-          _web3Wallet!.registerAccount(
-            chainId: chainId,
-            accountAddress: chainKey.publicKey,
-          );
-        }
+        _web3Wallet!.registerAccount(
+          chainId: chainId,
+          accountAddress: chainKey.publicKey,
+        );
       }
     }
 
@@ -87,7 +77,6 @@ class Web3WalletServiceImpl implements Web3WalletService {
     _web3Wallet!.onSessionProposal.subscribe(_onSessionProposal);
     _web3Wallet!.onSessionProposalError.subscribe(_onSessionProposalError);
     _web3Wallet!.onSessionConnect.subscribe(_onSessionConnect);
-    // _web3Wallet!.onSessionRequest.subscribe(_onSessionRequest);
     _web3Wallet!.onAuthRequest.subscribe(_onAuthRequest);
   }
 
@@ -110,7 +99,6 @@ class Web3WalletServiceImpl implements Web3WalletService {
     _web3Wallet!.onSessionProposal.unsubscribe(_onSessionProposal);
     _web3Wallet!.onSessionProposalError.unsubscribe(_onSessionProposalError);
     _web3Wallet!.onSessionConnect.unsubscribe(_onSessionConnect);
-    // _web3Wallet!.onSessionRequest.unsubscribe(_onSessionRequest);
     _web3Wallet!.onAuthRequest.unsubscribe(_onAuthRequest);
   }
 
@@ -131,25 +119,21 @@ class Web3WalletServiceImpl implements Web3WalletService {
 
   void _onSessionProposal(SessionProposalEvent? args) async {
     if (args != null) {
-      // log(args);
-
-      // Validate the
-      // args.params.
-
-      final Widget w = WCRequestWidget(
-        child: WCConnectionRequestWidget(
+      final Widget modalWidget = Web3RequestModal(
+        child: ConnectionRequestWidget(
           wallet: _web3Wallet!,
-          sessionProposal: WCSessionRequestModel(
+          sessionProposal: SessionRequestModel(
             request: args.params,
           ),
         ),
       );
-      final bool? approved = await _bottomSheetHandler.queueBottomSheet(
-        widget: w,
-      );
-      // log('approved: $approved');
 
-      if (approved != null && approved) {
+      // show the bottom sheet
+      final bool? isApproved = await _bottomSheetHandler.queueBottomSheet(
+        widget: modalWidget,
+      );
+
+      if (isApproved != null && isApproved) {
         _web3Wallet!.approveSession(
           id: args.id,
           namespaces: args.params.generatedNamespaces!,
@@ -187,21 +171,20 @@ class Web3WalletServiceImpl implements Web3WalletService {
       // Create the message to be signed
       final String iss = 'did:pkh:eip155:1:${chainKeys.first.publicKey}';
 
-      // log(args);
-      final Widget w = WCRequestWidget(
-        child: WCConnectionRequestWidget(
+      final Widget modalWidget = Web3RequestModal(
+        child: ConnectionRequestWidget(
           wallet: _web3Wallet!,
-          authRequest: WCAuthRequestModel(
+          authRequest: AuthRequestModel(
             iss: iss,
             request: args,
           ),
         ),
       );
-      final bool? auth = await _bottomSheetHandler.queueBottomSheet(
-        widget: w,
+      final bool? isAuthenticated = await _bottomSheetHandler.queueBottomSheet(
+        widget: modalWidget,
       );
 
-      if (auth != null && auth) {
+      if (isAuthenticated != null && isAuthenticated) {
         final String message = _web3Wallet!.formatAuthMessage(
           iss: iss,
           cacaoPayload: CacaoRequestPayload.fromPayloadParams(

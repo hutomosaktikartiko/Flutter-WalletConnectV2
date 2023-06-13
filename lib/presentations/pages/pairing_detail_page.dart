@@ -8,21 +8,21 @@ import '../../services/web3wallet_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/namespace_model_builder.dart';
 import '../../utils/string_constants.dart';
-import '../widgets/custom_button.dart';
+import '../widgets/buttons/custom_button.dart';
 
-class AppDetailPage extends StatefulWidget {
+class PairingDetailPage extends StatefulWidget {
   final PairingInfo pairing;
 
-  const AppDetailPage({
+  const PairingDetailPage({
     super.key,
     required this.pairing,
   });
 
   @override
-  AppDetailPageState createState() => AppDetailPageState();
+  PairingDetailPageState createState() => PairingDetailPageState();
 }
 
-class AppDetailPageState extends State<AppDetailPage> {
+class PairingDetailPageState extends State<PairingDetailPage> {
   @override
   Widget build(BuildContext context) {
     DateTime dateTime =

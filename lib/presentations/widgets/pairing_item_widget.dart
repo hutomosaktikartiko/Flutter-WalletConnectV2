@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/apis/core/pairing/utils/pairing_models.dart';
 
-class PairingItem extends StatelessWidget {
-  const PairingItem({
+class PairingItemWidget extends StatelessWidget {
+  const PairingItemWidget({
     super.key,
     required this.pairing,
     required this.onTap,
