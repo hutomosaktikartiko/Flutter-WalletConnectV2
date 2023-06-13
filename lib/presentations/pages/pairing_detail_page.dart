@@ -100,7 +100,7 @@ class PairingDetailPageState extends State<PairingDetailPage> {
                     type: CustomButtonType.invalid,
                     onTap: () async {
                       try {
-                        await GetIt.I<Web3WalletServiceImpl>()
+                        await GetIt.I<Web3WalletService>()
                             .getWeb3Wallet()
                             .core
                             .pairing
