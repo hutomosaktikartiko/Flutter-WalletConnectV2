@@ -2,9 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:test_wallet_connect_v2/utils/string_constants.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
-import '../dependencies/i_web3wallet_service.dart';
 import '../presentations/widgets/wc_connection_widget/wc_connection_model.dart';
 import '../presentations/widgets/wc_connection_widget/wc_connection_widget.dart';
+import '../services/web3wallet_service.dart';
 
 class ConnectionWidgetBuilder {
   static List<WCConnectionWidget> buildFromRequiredNamespaces(
@@ -69,7 +69,7 @@ class ConnectionWidgetBuilder {
           final String chainId = NamespaceUtils.isValidChainId(key)
               ? key
               : NamespaceUtils.getChainFromAccount(ns.accounts.first);
-          await GetIt.I<IWeb3WalletService>().getWeb3Wallet().emitSessionEvent(
+          await GetIt.I<Web3WalletService>().getWeb3Wallet().emitSessionEvent(
                 topic: topic,
                 chainId: chainId,
                 event: SessionEventParams(

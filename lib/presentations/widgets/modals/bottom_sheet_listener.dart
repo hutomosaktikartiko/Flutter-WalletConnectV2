@@ -1,9 +1,9 @@
-// bottom_sheet_listener.dart
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../utils/constants.dart';
-import 'i_bottom_sheet_service.dart';
+import '../../../models/bottom_sheet_queue_item_model.dart';
+import '../../../utils/constants.dart';
+import '../../../services/bottom_sheet_service.dart';
 
 class BottomSheetListener extends StatefulWidget {
   final Widget child;
@@ -18,12 +18,12 @@ class BottomSheetListener extends StatefulWidget {
 }
 
 class BottomSheetListenerState extends State<BottomSheetListener> {
-  late final IBottomSheetService _bottomSheetService;
+  late final BottomSheetService _bottomSheetService;
 
   @override
   void initState() {
     super.initState();
-    _bottomSheetService = GetIt.I<IBottomSheetService>();
+    _bottomSheetService = GetIt.I<BottomSheetService>();
     _bottomSheetService.currentSheet.addListener(_showBottomSheet);
   }
 
@@ -35,7 +35,7 @@ class BottomSheetListenerState extends State<BottomSheetListener> {
 
   Future<void> _showBottomSheet() async {
     if (_bottomSheetService.currentSheet.value != null) {
-      BottomSheetQueueItem item = _bottomSheetService.currentSheet.value!;
+      BottomSheetQueueItemModel item = _bottomSheetService.currentSheet.value!;
       final value = await showModalBottomSheet(
         context: context,
         backgroundColor: StyleConstants.clear,

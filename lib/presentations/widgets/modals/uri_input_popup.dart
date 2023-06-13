@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/constants.dart';
-import '../../utils/string_constants.dart';
-import 'custom_button.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/string_constants.dart';
+import '../custom_button.dart';
 
 class UriInputPopup extends StatelessWidget {
   UriInputPopup({

@@ -1,9 +1,9 @@
-class ChainKey {
+class ChainKeyModel {
   final List<String> chains;
   final String privateKey;
   final String publicKey;
 
-  ChainKey({
+  ChainKeyModel({
     required this.chains,
     required this.privateKey,
     required this.publicKey,
@@ -11,6 +11,6 @@ class ChainKey {
 
   @override
   String toString() {
-    return 'ChainKey(chains: $chains, privateKey: $privateKey, publicKey: $publicKey)';
+    return 'ChainKeyModel(chains: $chains, privateKey: $privateKey, publicKey: $publicKey)';
   }
 }

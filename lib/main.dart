@@ -1,19 +1,15 @@
-import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
-import 'package:test_wallet_connect_v2/presentations/pages/apps_page.dart';
-import 'package:test_wallet_connect_v2/utils/constants.dart';
+import 'package:test_wallet_connect_v2/services/chain_service.dart';
 
-import 'dependencies/bottom_sheet/bottom_sheet_listener.dart';
-import 'dependencies/bottom_sheet/bottom_sheet_service.dart';
-import 'dependencies/bottom_sheet/i_bottom_sheet_service.dart';
-import 'dependencies/chains/evm_service.dart';
-import 'dependencies/chains/i_chain.dart';
-import 'dependencies/i_web3wallet_service.dart';
-import 'dependencies/key_service/i_key_service.dart';
-import 'dependencies/key_service/key_service.dart';
-import 'dependencies/web3wallet_service.dart';
-import 'models/page_data.dart';
+import 'presentations/pages/apps_page.dart';
+import 'presentations/widgets/modals/bottom_sheet_listener.dart';
+import 'services/bottom_sheet_service.dart';
+import 'services/evm_chain_service.dart';
+import 'services/key_service.dart';
+import 'services/web3wallet_service.dart';
+import 'utils/constants.dart';
 import 'utils/string_constants.dart';
 
 Future<void> main() async {
@@ -98,9 +94,6 @@ class MyHomePage extends StatefulWidget with GetItStatefulWidgetMixin {
 class _MyHomePageState extends State<MyHomePage> with GetItStateMixin {
   bool _initializing = true;
 
-  List<PageData> _pageDatas = [];
-  int _selectedIndex = 0;
-
   @override
   void initState() {
     initialize();
@@ -109,23 +102,16 @@ class _MyHomePageState extends State<MyHomePage> with GetItStateMixin {
   }
 
   Future<void> initialize() async {
-    GetIt.I.registerSingleton<IBottomSheetService>(BottomSheetService());
-    GetIt.I.registerSingleton<IKeyService>(KeyService());
+    GetIt.I.registerSingleton<BottomSheetService>(BottomSheetServiceImpl());
+    GetIt.I.registerSingleton<KeyService>(KeyServiceImpl());
 
-    final IWeb3WalletService web3WalletService = Web3WalletService();
+    final Web3WalletService web3WalletService = Web3WalletServiceImpl();
     web3WalletService.create();
-    GetIt.I.registerSingleton<IWeb3WalletService>(web3WalletService);
-
-    // for (final cId in KadenaChainId.values) {
-    //   GetIt.I.registerSingleton<IChain>(
-    //     KadenaService(reference: cId),
-    //     instanceName: cId.chain,
-    //   );
-    // }
+    GetIt.I.registerSingleton<Web3WalletService>(web3WalletService);
 
     for (final cId in EVMChainId.values) {
-      GetIt.I.registerSingleton<IChain>(
-        EVMService(reference: cId),
+      GetIt.I.registerSingleton<ChainService>(
+        EvmChainServiceImpl(reference: cId),
         instanceName: cId.chain(),
       );
     }
@@ -133,24 +119,6 @@ class _MyHomePageState extends State<MyHomePage> with GetItStateMixin {
     await web3WalletService.init();
 
     setState(() {
-      _pageDatas = [
-        PageData(
-          page: AppsPage(),
-          title: StringConstants.connectPageTitle,
-          icon: Icons.home,
-        ),
-        PageData(
-          page: const Center(
-            child: Text(
-              'Notifications (Not Implemented)',
-              style: StyleConstants.bodyText,
-            ),
-          ),
-          title: StringConstants.pairingsPageTitle,
-          icon: Icons.notifications,
-        ),
-      ];
-
       _initializing = false;
     });
   }
@@ -165,73 +133,13 @@ class _MyHomePageState extends State<MyHomePage> with GetItStateMixin {
       );
     }
 
-    final List<Widget> navRail = [];
-    if (MediaQuery.of(context).size.width >= Constants.smallScreen) {
-      navRail.add(_buildNavigationRail());
-    }
-    navRail.add(
-      Expanded(
-        child: _pageDatas[_selectedIndex].page,
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pageDatas[_selectedIndex].title),
+        title: const Text(StringConstants.connectPageTitle),
       ),
-      bottomNavigationBar:
-          MediaQuery.of(context).size.width < Constants.smallScreen
-              ? _buildBottomNavBar()
-              : null,
       body: BottomSheetListener(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: navRail,
-        ),
+        child: AppsPage(),
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: Colors.indigoAccent,
-      // called when one tab is selected
-      onTap: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      // bottom tab items
-      items: _pageDatas
-          .map(
-            (e) => BottomNavigationBarItem(
-              icon: Icon(e.icon),
-              label: e.title,
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildNavigationRail() {
-    return NavigationRail(
-      selectedIndex: _selectedIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      labelType: NavigationRailLabelType.selected,
-      destinations: _pageDatas
-          .map(
-            (e) => NavigationRailDestination(
-              icon: Icon(e.icon),
-              label: Text(e.title),
-            ),
-          )
-          .toList(),
     );
   }
 }

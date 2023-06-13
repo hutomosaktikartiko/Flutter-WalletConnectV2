@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
-import '../../dependencies/i_web3wallet_service.dart';
+import '../../services/web3wallet_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/namespace_model_builder.dart';
 import '../../utils/string_constants.dart';
@@ -35,7 +35,7 @@ class AppDetailPageState extends State<AppDetailPage> {
         '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
 
     List<SessionData> sessions = GetIt.I
-        .get<IWeb3WalletService>()
+        .get<Web3WalletService>()
         .getWeb3Wallet()
         .sessions
         .getAll()
@@ -100,7 +100,7 @@ class AppDetailPageState extends State<AppDetailPage> {
                     type: CustomButtonType.invalid,
                     onTap: () async {
                       try {
-                        await GetIt.I<IWeb3WalletService>()
+                        await GetIt.I<Web3WalletServiceImpl>()
                             .getWeb3Wallet()
                             .core
                             .pairing

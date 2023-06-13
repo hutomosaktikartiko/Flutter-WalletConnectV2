@@ -1,4 +1,4 @@
-class EthereumTransaction {
+class EthereumTransactionModel {
   final String from;
   final String to;
   final String value;
@@ -10,7 +10,7 @@ class EthereumTransaction {
   final String? gasLimit;
   final String? data;
 
-  EthereumTransaction({
+  EthereumTransactionModel({
     required this.from,
     required this.to,
     required this.value,
@@ -23,8 +23,8 @@ class EthereumTransaction {
     this.data,
   });
 
-  factory EthereumTransaction.fromJson(Map<String, dynamic> json) {
-    return EthereumTransaction(
+  factory EthereumTransactionModel.fromJson(Map<String, dynamic> json) {
+    return EthereumTransactionModel(
       from: json['from'] as String,
       to: json['to'] as String,
       value: json['value'] as String,
@@ -55,6 +55,6 @@ class EthereumTransaction {
 
   @override
   String toString() {
-    return 'WCEthereumTransaction(from: $from, to: $to, nonce: $nonce, gasPrice: $gasPrice, maxFeePerGas: $maxFeePerGas, maxPriorityFeePerGas: $maxPriorityFeePerGas, gas: $gas, gasLimit: $gasLimit, value: $value, data: $data)';
+    return 'WCEthereumTransactionModel(from: $from, to: $to, nonce: $nonce, gasPrice: $gasPrice, maxFeePerGas: $maxFeePerGas, maxPriorityFeePerGas: $maxPriorityFeePerGas, gas: $gas, gasLimit: $gasLimit, value: $value, data: $data)';
   }
 }

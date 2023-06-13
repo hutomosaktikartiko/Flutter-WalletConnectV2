@@ -3,13 +3,23 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 
-import 'i_bottom_sheet_service.dart';
+import '../models/bottom_sheet_queue_item_model.dart';
 
-class BottomSheetService extends IBottomSheetService {
-  Queue queue = Queue<BottomSheetQueueItem>();
+abstract class BottomSheetService {
+  abstract final ValueNotifier<BottomSheetQueueItemModel?> currentSheet;
+
+  Future<dynamic> queueBottomSheet({
+    required Widget widget,
+  });
+
+  void showNext();
+}
+
+class BottomSheetServiceImpl implements BottomSheetService {
+  Queue queue = Queue<BottomSheetQueueItemModel>();
 
   @override
-  final ValueNotifier<BottomSheetQueueItem?> currentSheet = ValueNotifier(null);
+  final ValueNotifier<BottomSheetQueueItemModel?> currentSheet = ValueNotifier(null);
 
   @override
   Future<dynamic> queueBottomSheet({
@@ -17,7 +27,7 @@ class BottomSheetService extends IBottomSheetService {
   }) async {
     // Create the bottom sheet queue item
     final completer = Completer<dynamic>();
-    final queueItem = BottomSheetQueueItem(
+    final queueItem = BottomSheetQueueItemModel(
       widget: widget,
       completer: completer,
     );

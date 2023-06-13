@@ -1,4 +1,4 @@
-abstract class IChain {
+abstract class ChainService {
   String getNamespace();
   String getChainId();
   List<String> getEvents();

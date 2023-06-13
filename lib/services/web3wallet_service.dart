@@ -7,19 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
+import '../models/chain_key_model.dart';
 import '../presentations/widgets/wc_connection_request/wc_auth_request_model.dart';
 import '../presentations/widgets/wc_connection_request/wc_connection_request_widget.dart';
 import '../presentations/widgets/wc_connection_request/wc_session_request_model.dart';
 import '../presentations/widgets/wc_request_widget/wc_request_widget.dart';
 import '../utils/dart_defines.dart';
-import 'bottom_sheet/i_bottom_sheet_service.dart';
-import 'i_web3wallet_service.dart';
-import 'key_service/chain_key.dart';
-import 'key_service/i_key_service.dart';
+import 'bottom_sheet_service.dart';
+import 'key_service.dart';
 
-class Web3WalletService extends IWeb3WalletService {
-  final IBottomSheetService _bottomSheetHandler =
-      GetIt.I<IBottomSheetService>();
+abstract class Web3WalletService implements Disposable {
+  abstract ValueNotifier<List<PairingInfo>> pairings;
+  abstract ValueNotifier<List<SessionData>> sessions;
+  abstract ValueNotifier<List<StoredCacao>> auth;
+
+  void create();
+  Future<void> init();
+  Web3Wallet getWeb3Wallet();
+}
+
+class Web3WalletServiceImpl implements Web3WalletService {
+  final BottomSheetService _bottomSheetHandler =
+      GetIt.I<BottomSheetService>();
 
   Web3Wallet? _web3Wallet;
 
@@ -37,7 +46,7 @@ class Web3WalletService extends IWeb3WalletService {
 
   @override
   void create() {
-// Create the web3wallet
+    // Create the web3wallet
     _web3Wallet = Web3Wallet(
       core: Core(
         projectId: DartDefines.projectId,
@@ -51,7 +60,7 @@ class Web3WalletService extends IWeb3WalletService {
     );
 
     // Setup our accounts
-    List<ChainKey> chainKeys = GetIt.I<IKeyService>().getKeys();
+    List<ChainKeyModel> chainKeys = GetIt.I<KeyService>().getKeys();
     for (final chainKey in chainKeys) {
       for (final chainId in chainKey.chains) {
         if (chainId.startsWith('kadena')) {
@@ -172,7 +181,7 @@ class Web3WalletService extends IWeb3WalletService {
 
   Future<void> _onAuthRequest(AuthRequest? args) async {
     if (args != null) {
-      List<ChainKey> chainKeys = GetIt.I<IKeyService>().getKeysForChain(
+      List<ChainKeyModel> chainKeys = GetIt.I<KeyService>().getKeysForChain(
         'eip155:1',
       );
       // Create the message to be signed

@@ -9,16 +9,16 @@ import 'package:http/http.dart' as http;
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../models/eth/ethereum_transaction.dart';
-import '../../presentations/widgets/wc_connection_widget/wc_connection_model.dart';
-import '../../presentations/widgets/wc_connection_widget/wc_connection_widget.dart';
-import '../../presentations/widgets/wc_request_widget/wc_request_widget.dart';
-import '../../utils/eth_utils.dart';
-import '../bottom_sheet/i_bottom_sheet_service.dart';
-import '../i_web3wallet_service.dart';
-import '../key_service/chain_key.dart';
-import '../key_service/i_key_service.dart';
-import 'i_chain.dart';
+import '../models/chain_key_model.dart';
+import '../models/ethereum_transaction_model.dart';
+import '../presentations/widgets/wc_connection_widget/wc_connection_model.dart';
+import '../presentations/widgets/wc_connection_widget/wc_connection_widget.dart';
+import '../presentations/widgets/wc_request_widget/wc_request_widget.dart';
+import '../utils/string_parsing.dart';
+import 'bottom_sheet_service.dart';
+import 'chain_service.dart';
+import 'key_service.dart';
+import 'web3wallet_service.dart';
 
 enum EVMChainId {
   ethereum,
@@ -46,11 +46,11 @@ extension KadenaChainIdX on EVMChainId {
         break;
     }
 
-    return '${EVMService.namespace}:$name';
+    return '${EvmChainServiceImpl.namespace}:$name';
   }
 }
 
-class EVMService extends IChain {
+class EvmChainServiceImpl implements ChainService {
   static const namespace = 'eip155';
   static const pSign = 'personal_sign';
   static const eSign = 'eth_sign';
@@ -58,15 +58,15 @@ class EVMService extends IChain {
   static const eSignTypedData = 'eth_signTypedData';
   static const eSendTransaction = 'eth_sendTransaction';
 
-  final IBottomSheetService _bottomSheetService =
-      GetIt.I<IBottomSheetService>();
-  final IWeb3WalletService _web3WalletService = GetIt.I<IWeb3WalletService>();
+  final BottomSheetService _bottomSheetService =
+      GetIt.I<BottomSheetService>();
+  final Web3WalletService _web3WalletService = GetIt.I<Web3WalletService>();
 
   final EVMChainId reference;
 
   final Web3Client ethClient;
 
-  EVMService({
+  EvmChainServiceImpl({
     required this.reference,
     Web3Client? ethClient,
   }) : ethClient = ethClient ??
@@ -143,7 +143,9 @@ class EVMService extends IChain {
   Future personalSign(String topic, dynamic parameters) async {
     log('received personal sign request: $parameters');
 
-    final String message = EthUtils.getUtf8Message(parameters[0]);
+    final String message = (parameters[0] is String)
+        ? (parameters[0] as String).utf8Message
+        : parameters[0].toString().utf8Message;
 
     final String? authAcquired = await requestAuthorization(message);
     if (authAcquired != null) {
@@ -152,7 +154,7 @@ class EVMService extends IChain {
 
     try {
       // Load the private key
-      final List<ChainKey> keys = GetIt.I<IKeyService>().getKeysForChain(
+      final List<ChainKeyModel> keys = GetIt.I<KeyService>().getKeysForChain(
         getChainId(),
       );
       final Credentials credentials = EthPrivateKey.fromHex(keys[0].privateKey);
@@ -175,7 +177,9 @@ class EVMService extends IChain {
   Future ethSign(String topic, dynamic parameters) async {
     log('received eth sign request: $parameters');
 
-    final String message = EthUtils.getUtf8Message(parameters[1]);
+    final String message = (parameters[1] is String)
+        ? (parameters[1] as String).utf8Message
+        : parameters[1].toString().utf8Message;
 
     final String? authAcquired = await requestAuthorization(message);
     if (authAcquired != null) {
@@ -184,7 +188,7 @@ class EVMService extends IChain {
 
     try {
       // Load the private key
-      final List<ChainKey> keys = GetIt.I<IKeyService>().getKeysForChain(
+      final List<ChainKeyModel> keys = GetIt.I<KeyService>().getKeysForChain(
         getChainId(),
       );
       // log('private key');
@@ -228,18 +232,18 @@ class EVMService extends IChain {
     }
 
     // Load the private key
-    final List<ChainKey> keys = GetIt.I<IKeyService>().getKeysForChain(
+    final List<ChainKeyModel> keys = GetIt.I<KeyService>().getKeysForChain(
       getChainId(),
     );
     final Credentials credentials = EthPrivateKey.fromHex(
       '0x${keys[0].privateKey}',
     );
 
-    EthereumTransaction ethTransaction = EthereumTransaction.fromJson(
+    EthereumTransactionModel ethTransaction = EthereumTransactionModel.fromJson(
       parameters[0],
     );
 
-    // Construct a transaction from the EthereumTransaction object
+    // Construct a transaction from the EthereumTransactionModel object
     final transaction = Transaction(
       from: EthereumAddress.fromHex(ethTransaction.from),
       to: EthereumAddress.fromHex(ethTransaction.to),
@@ -298,7 +302,7 @@ class EVMService extends IChain {
       return authAcquired;
     }
 
-    final List<ChainKey> keys = GetIt.I<IKeyService>().getKeysForChain(
+    final List<ChainKeyModel> keys = GetIt.I<KeyService>().getKeysForChain(
       getChainId(),
     );
 
